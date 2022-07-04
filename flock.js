@@ -1,8 +1,8 @@
 let flock;
 let canvasW = 640;
 let canvasH = 360;
-// let canvasW = 1200;
-// let canvasH = 700;
+// let canvasW = 1000;
+// let canvasH = 500;
 
 const mix1 = ["#9B5DE5","#F15BB5","#FEE440","#00BBF9","#00F5D4"];
 const mix2 = ["#FFBE0B","#FB5607","#FF006E","#8338EC","#3A86FF"];
@@ -23,6 +23,8 @@ function setup() {
 
 function draw() {
   background('#219ebc');
+  fill("#000000")
+  rect(220, 290, 200, 90, 20, 20);
   flock.run();
 }
 
@@ -129,7 +131,6 @@ Boid.prototype.render = function() {
   let theta = this.velocity.heading() + radians(90);
   // fill(127);
   // fill('#F679E5');
-  console.log('boids_color =', this.color);
   fill(this.color);
   // stroke(200);
   noStroke();
@@ -256,5 +257,19 @@ Boid.prototype.avoid = function(boids) {
   if (this.position.y > canvasH) { // height of canvas
     steer.add(createVector(0, -1));
   }
+
+  // console.log("velocity", this.velocity.x);
+  // LeftSide
+  if (this.position.x == 210 && this.position.y >= 280) {
+    steer.add(createVector(0, 1));
+  }
+  // Top+
+  if (this.position.x >= 210 && this.position.x <= 430 && this.position.y >= 280) {
+    steer.add(createVector(0, -1));
+  }
+  if (this.position.x == 430 && this.position.y >= 280) {
+    steer.add(createVector(0, 1));
+  }
+
   return steer;
 }
