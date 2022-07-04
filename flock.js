@@ -3,7 +3,11 @@ let canvasW = 640;
 let canvasH = 360;
 // let canvasW = 1200;
 // let canvasH = 700;
-const mix2 = ['#AA1155', '#880044', '#DD1155', '#FFEE88', '#00CC99'];
+
+const mix1 = ["#9B5DE5","#F15BB5","#FEE440","#00BBF9","#00F5D4"];
+const mix2 = ["#FFBE0B","#FB5607","#FF006E","#8338EC","#3A86FF"];
+const mix_combo =  ["#9B5DE5","#F15BB5","#FEE440","#00BBF9","#00F5D4", "#FFBE0B","#FB5607","#FF006E","#8338EC","#3A86FF"];
+const rainbow = ["#FF0000","#FF8700","#FFD300","#DEFF0A","#A1FF0A","#0AFF99","#0AEFFF","#147DF5","#580AFF","#BE0AFF"];
 
 function setup() {
   createCanvas(canvasW, canvasH);
@@ -18,7 +22,7 @@ function setup() {
 }
 
 function draw() {
-  background(51);
+  background('#219ebc');
   flock.run();
 }
 
@@ -60,9 +64,10 @@ function Boid(x, y) {
   this.acceleration = createVector(0, 0);
   this.velocity = createVector(random(-1, 1), random(-1, 1));
   this.position = createVector(x, y);
-  this.r = 3.0;
+  this.r = 4.0;
   this.maxspeed = 3;    // Maximum speed
   this.maxforce = 0.05; // Maximum steering force
+  this.color = random(mix_combo);
 }
 
 Boid.prototype.run = function(boids) {
@@ -123,16 +128,28 @@ Boid.prototype.render = function() {
   // Draw a triangle rotated in the direction of velocity
   let theta = this.velocity.heading() + radians(90);
   // fill(127);
-  fill('#F679E5');
-  stroke(200);
+  // fill('#F679E5');
+  console.log('boids_color =', this.color);
+  fill(this.color);
+  // stroke(200);
+  noStroke();
   push();
   translate(this.position.x, this.position.y);
   rotate(theta);
+  // beginShape();
+  // vertex(0, -this.r * 2);
+  // vertex(-this.r, this.r * 2);
+  // vertex(this.r, this.r * 2);
+  // endShape(CLOSE);
   beginShape();
-  vertex(0, -this.r * 2);
+  vertex(0, -this.r * 3.5);
+  vertex(-this.r, -this.r * 2);
+  vertex(-this.r/3, 0);
   vertex(-this.r, this.r * 2);
   vertex(this.r, this.r * 2);
-  endShape(CLOSE);
+  vertex(this.r/3, 0);
+  vertex(this.r, -this.r * 2);
+  endShape();
   pop();
 }
 
