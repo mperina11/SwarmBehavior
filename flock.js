@@ -1,8 +1,8 @@
 let flock;
-let canvasW = 640;
-let canvasH = 360;
-// let canvasW = 1000;
-// let canvasH = 500;
+// let canvasW = 640;
+// let canvasH = 360;
+let canvasW = 1000;
+let canvasH = 500;
 
 const mix1 = ["#9B5DE5","#F15BB5","#FEE440","#00BBF9","#00F5D4"];
 const mix2 = ["#FFBE0B","#FB5607","#FF006E","#8338EC","#3A86FF"];
@@ -24,7 +24,7 @@ function setup() {
 function draw() {
   background('#219ebc');
   fill("#333333")
-  rect(220, 290, 200, 90, 20, 20);
+  rect(220, 290, 200, 220, 20, 20);
   flock.run();
 }
 
