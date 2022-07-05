@@ -4,6 +4,7 @@ let flock_size;
 // let canvasH = 360;
 let canvasW = 1000;
 let canvasH = 500;
+let box1_color, box2_color;
 let conv_flag = false;
 let feed_flag = false;
 let feed_color;
@@ -20,6 +21,8 @@ function setup() {
   createP("- UP arrow to converge, DOWN arrow to let go");
   createP("- RIGHT arrow to drop feed, LEFT arrow to stop");
 
+  box1_color = random(rainbow);
+  box2_color = random(rainbow);
   feed_color = random(rainbow);
   feedPositionX = random(200, 800);
   feedPositionY = random(0, 250);
@@ -34,8 +37,9 @@ function setup() {
 
 function draw() {
   background('#219ebc');
-  fill("#333333")
+  fill(box1_color);
   rect(220, 290, 200, 220, 20, 20);
+  fill(box2_color);
   rect(800, -20, 220, 100, 20, 20);
   flock.run();
   keyPressed();
