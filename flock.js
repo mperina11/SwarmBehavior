@@ -3,10 +3,11 @@ let flock;
 // let canvasH = 360;
 let canvasW = 1000;
 let canvasH = 500;
+let conv_flag = false;
+let feed_flag = false;
+let feedPosition;
 
-const mix1 = ["#9B5DE5","#F15BB5","#FEE440","#00BBF9","#00F5D4"];
-const mix2 = ["#FFBE0B","#FB5607","#FF006E","#8338EC","#3A86FF"];
-const mix_combo =  ["#9B5DE5","#F15BB5","#FEE440","#00BBF9","#00F5D4", "#FFBE0B","#FB5607","#FF006E","#8338EC","#3A86FF"];
+const mix =  ["#9B5DE5","#F15BB5","#FEE440","#00BBF9","#00F5D4", "#FFBE0B","#FB5607","#FF006E","#8338EC","#3A86FF"];
 const rainbow = ["#FF0000","#FF8700","#FFD300","#DEFF0A","#A1FF0A","#0AFF99","#0AEFFF","#147DF5","#580AFF","#BE0AFF"];
 
 function setup() {
@@ -26,11 +27,30 @@ function draw() {
   fill("#333333")
   rect(220, 290, 200, 220, 20, 20);
   flock.run();
+  keyPressed();
 }
 
 // Add a new boid into the System
 function mouseDragged() {
   flock.addBoid(new Boid(mouseX, mouseY));
+}
+
+function keyPressed() {
+  if (keyCode === UP_ARROW) {
+    conv_flag = true;
+  }
+  else if (keyCode === DOWN_ARROW) {
+    conv_flag = false;
+  }
+  else if (keyCode === RIGHT_ARROW) {
+    feed_flag = true;
+    fill("#333333");
+    circle(220, 100, 20);
+    feedPosition = createVector(220, 100);
+  }
+  else if (keyCode === LEFT_ARROW) {
+    feed_flag = false; 
+  }
 }
 
 // The Nature of Code
@@ -69,7 +89,7 @@ function Boid(x, y) {
   this.r = 4.0;
   this.maxspeed = 3;    // Maximum speed
   this.maxforce = 0.05; // Maximum steering force
-  this.color = random(mix_combo);
+  this.color = random(mix);
 }
 
 Boid.prototype.run = function(boids) {
@@ -89,17 +109,23 @@ Boid.prototype.flock = function(boids) {
   let sep = this.separate(boids);   // Separation
   let ali = this.align(boids);      // Alignment
   let coh = this.cohesion(boids);   // Cohesion
-  let avo = this.avoid(boids);      // Avoid walls
+  let avo = this.avoid(boids);      // Avoid walls + Box
+  let con = this.converge(boids);   // Converge 
+  let fee = this.feed(boids);
   // Arbitrarily weight these forces
   sep.mult(10.0);
   ali.mult(2.0);
   coh.mult(1.0);
   avo.mult(3.0);
+  con.mult(10.0);
+  fee.mult(10.0);
   // Add the force vectors to acceleration
   this.applyForce(sep);
   this.applyForce(ali);
   this.applyForce(coh);
   this.applyForce(avo);
+  this.applyForce(con);
+  this.applyForce(fee);
 }
 
 // Method to update location
@@ -241,6 +267,41 @@ Boid.prototype.cohesion = function(boids) {
   } else {
     return createVector(0, 0);
   }
+}
+
+Boid.prototype.converge = function(boids) {
+  let conv = createVector(0, 0);
+  let sum = createVector(0, 0);
+  let count = 0;
+
+  if (conv_flag) { // create 
+    console.log("Feeding");
+
+    for (let i = 0; i < boids.length; i++) {
+      let d = p5.Vector.dist(this.position,conv);
+      if ((d > 0)) {
+        sum.add(boids[i].position); // Add location
+        count++;
+      }
+    }
+  }
+
+  if (count > 0) {
+    sum.div(count);
+    return this.seek(sum);  // Steer towards the location
+  } else {
+    return createVector(0, 0);
+  }
+}
+
+Boid.prototype.feed = function(boids) {
+  let eat = createVector(0, 0);
+
+  if (feed_flag) {
+    eat.add(feedPosition); 
+  }
+  
+  return eat;
 }
 
 Boid.prototype.avoid = function(boids) {
