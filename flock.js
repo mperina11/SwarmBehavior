@@ -23,7 +23,7 @@ function setup() {
 
 function draw() {
   background('#219ebc');
-  fill("#000000")
+  fill("#333333")
   rect(220, 290, 200, 90, 20, 20);
   flock.run();
 }
