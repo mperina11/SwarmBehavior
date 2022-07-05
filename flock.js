@@ -1,4 +1,5 @@
 let flock;
+let flock_size;
 // let canvasW = 640;
 // let canvasH = 360;
 let canvasW = 1000;
@@ -13,9 +14,11 @@ const rainbow = ["#FF0000","#FF8700","#FFD300","#DEFF0A","#A1FF0A","#0AFF99","#0
 
 function setup() {
   createCanvas(canvasW, canvasH);
-  createP("Drag the mouse to generate new boids.");
-  createP("UP to converge, DOWN to let go.");
-  createP("RIGHT to drop feed, LEFT to stop.");
+  flock_size = 0;
+  // createP("Boid Count: " + flock_size);
+  createP("- Click and drag mouse to generate new boids");
+  createP("- UP arrow to converge, DOWN arrow to let go");
+  createP("- RIGHT arrow to drop feed, LEFT arrow to stop");
 
   feed_color = random(rainbow);
   feedPositionX = random(200, 800);
@@ -84,6 +87,7 @@ Flock.prototype.run = function() {
 
 Flock.prototype.addBoid = function(b) {
   this.boids.push(b);
+  flock_size++;
 }
 
 // The Nature of Code
