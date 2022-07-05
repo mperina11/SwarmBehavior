@@ -5,7 +5,8 @@ let canvasW = 1000;
 let canvasH = 500;
 let conv_flag = false;
 let feed_flag = false;
-let feedPosition;
+let feed_color;
+let feedPosition, feedPositionX, feedPositionY;
 
 const mix =  ["#9B5DE5","#F15BB5","#FEE440","#00BBF9","#00F5D4", "#FFBE0B","#FB5607","#FF006E","#8338EC","#3A86FF"];
 const rainbow = ["#FF0000","#FF8700","#FFD300","#DEFF0A","#A1FF0A","#0AFF99","#0AEFFF","#147DF5","#580AFF","#BE0AFF"];
@@ -13,10 +14,16 @@ const rainbow = ["#FF0000","#FF8700","#FFD300","#DEFF0A","#A1FF0A","#0AFF99","#0
 function setup() {
   createCanvas(canvasW, canvasH);
   createP("Drag the mouse to generate new boids.");
+  createP("UP to converge, DOWN to let go.");
+  createP("RIGHT to drop feed, LEFT to stop.");
+
+  feed_color = random(rainbow);
+  feedPositionX = random(200, 800);
+  feedPositionY = random(0, 250);
 
   flock = new Flock();
   // Add an initial set of boids into the system
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 20; i++) {
     let b = new Boid(width / 2,height / 2);
     flock.addBoid(b);
   }
@@ -26,6 +33,7 @@ function draw() {
   background('#219ebc');
   fill("#333333")
   rect(220, 290, 200, 220, 20, 20);
+  rect(800, -20, 220, 100, 20, 20);
   flock.run();
   keyPressed();
 }
@@ -44,12 +52,15 @@ function keyPressed() {
   }
   else if (keyCode === RIGHT_ARROW) {
     feed_flag = true;
-    fill("#333333");
-    circle(220, 100, 20);
-    feedPosition = createVector(220, 100);
+    fill(feed_color);
+    circle(feedPositionX, feedPositionY, 20);
+    feedPosition = createVector(feedPositionX, feedPositionY);
   }
   else if (keyCode === LEFT_ARROW) {
     feed_flag = false; 
+    feedPositionX = random(200, 800);
+    feedPositionY = random(0, 250);
+    feed_color = random(rainbow);
   }
 }
 
@@ -111,7 +122,7 @@ Boid.prototype.flock = function(boids) {
   let coh = this.cohesion(boids);   // Cohesion
   let avo = this.avoid(boids);      // Avoid walls + Box
   let con = this.converge(boids);   // Converge 
-  let fee = this.feed(boids);
+  let fee = this.feed(boids);       // Feed
   // Arbitrarily weight these forces
   sep.mult(10.0);
   ali.mult(2.0);
@@ -298,7 +309,7 @@ Boid.prototype.feed = function(boids) {
   let eat = createVector(0, 0);
 
   if (feed_flag) {
-    eat.add(feedPosition); 
+    eat = this.seek(feedPosition);
   }
   
   return eat;
@@ -306,6 +317,8 @@ Boid.prototype.feed = function(boids) {
 
 Boid.prototype.avoid = function(boids) {
   let steer = createVector(0, 0);
+
+  // Avoid Walls
   if (this.position.x <= 0) {
     steer.add(createVector(1, 0));
   }
@@ -319,7 +332,8 @@ Boid.prototype.avoid = function(boids) {
     steer.add(createVector(0, -1));
   }
 
-  // console.log("velocity", this.velocity.x);
+  // Avoid Bottom Box
+  // rect(220, 290, 200, 220, 20, 20);
   // LeftSide
   if (this.position.x == 210 && this.position.y >= 280) {
     steer.add(createVector(0, 1));
@@ -331,6 +345,16 @@ Boid.prototype.avoid = function(boids) {
   if (this.position.x == 430 && this.position.y >= 280) {
     steer.add(createVector(0, 1));
   }
+
+  // Avoid top right Box  
+  // rect(800, -20, 220, 100, 20, 20);
+  if (this.position.x == 790 && this.position.y <= 80 ) {
+    steer.add(createVector(0, 1));
+  }
+  if (this.position.x >= 790 && this.position.x <= canvasW && this.position.y <= 90) {
+    steer.add(createVector(-1, 0));
+  }
+
 
   return steer;
 }
