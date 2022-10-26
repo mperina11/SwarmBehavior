@@ -1,6 +1,6 @@
 # SwarmBehavior
 
-#### [Playable Link](https://mperina11.github.io/SwarmBehavior/)
+![screenshot](./Images/screenshot.png)
 
 #### Description
 Simulating fish and school of fish behavior using Boids
@@ -13,3 +13,4 @@ Effect
 - tried to achieve the visual swarm behavior of a school of fish
 - yes I achieved the effect
 
+#### [Playable Link](https://mperina11.github.io/SwarmBehavior/)
